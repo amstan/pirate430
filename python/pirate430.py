@@ -3,10 +3,35 @@
 
 import serial
 
+class _safeSerial(serial.Serial):
+	"""Seems like whenever serial.Serial is interrupted while it's waiting:
+	   File "/usr/lib/python3.3/site-packages/serial/serialposix.py", line 511, in write
+	   _, ready, _ = select.select([], [self.fd], [], None)
+	   Then next operation(a read or write) will freeze the device.
+	   The workaround is to close the port and reopen it when it gets interrupted.
+	   This could be a bug in the embedded code.
+	"""
+	
+	def read(self,*args):
+		try:
+			return serial.Serial.read(self,*args)
+		except:
+			self.close()
+			self.open()
+			raise
+	
+	def write(self,*args):
+		try:
+			return serial.Serial.write(self,*args)
+		except:
+			self.close()
+			self.open()
+			raise
+
 class spi(object):
 	def __init__(self,port="/dev/ttyACM0",baud=9600,*args):
 		self.port=port
-		self._serial=serial.Serial(self.port,baud,rtscts=True,*args)
+		self._serial=_safeSerial(self.port,baud,rtscts=True,*args)
 		
 		self.sync()
 		
