@@ -12,3 +12,7 @@
 #define MISO 1
 
 #define CS_PORT 6
+
+#define UART_PORT 4
+#define UART_TX 4
+#define UART_RX 5

@@ -1,6 +1,6 @@
 void spi_init(unsigned int clocksettings) {
 	//giveup control of the other pins to the spi hardware
-	SEL(SPI_PORT)=(1<<SCK)|(1<<MOSI)|(1<<MISO);
+	set_bits(SEL(SPI_PORT),(1<<SCK)|(1<<MOSI)|(1<<MISO));
 	
 	// Put state machine in reset
 	UCB0CTL1 = UCSWRST;

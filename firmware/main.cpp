@@ -1,16 +1,21 @@
 #include <msp430.h>
 #include "portmacros.h"
 #include "bitop.h"
-#include "USBSerial.h"
+
+#define F_CPU 16000000
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include "ringbuffer.h"
+typedef ringbuffer<char, 16> buffer;
+buffer uart_buffer = { 0, 0, { 0 } };
+#include "usci_uart.h"
+UCA1<buffer> uart = { uart_buffer };
+
 #include "pins.h"
 #include "spi.c"
-
-#define F_CPU 16000000
 
 ///Set multiplier based on the slow xtal
 void core_frequency_set(unsigned long int frequency) {
@@ -30,22 +35,27 @@ void chip_init(void) {
 	
 	set_bit(DIR(LED_R_PORT),LED_R);
 	set_bit(DIR(LED_G_PORT),LED_G);
+	
+	set_bit(SEL(UART_PORT),UART_TX);
+	set_bit(SEL(UART_PORT),UART_RX);
+	
+	//Enable interrupts
+	__bis_status_register(GIE);
 }
 
 char getchar(void) {
-	while(!USBSerial_available());
-	return USBSerial_read();
+	return uart.recv();
 }
 
 int putchar(int c) {
-	int ret=USBSerial_write(c);
-	USBSerial_flush(); USBSerial_flush(); //workaround for https://github.com/energia/Energia/issues/320
-	return ret;
+	uart.xmit(c);
+	return 0;
 }
 
 int main(void) {
 	chip_init();
-	USBSerial_open();
+	uart.init(115200);
+	
 	clear_bit(OUT(LED_G_PORT),LED_G);
 	clear_bit(OUT(LED_R_PORT),LED_R);
 	

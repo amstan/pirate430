@@ -6,7 +6,7 @@ CXX = msp430-g++
 OBJDUMP = msp430-objdump
 SIZE = msp430-size
 MSPDEBUG = mspdebug
-CFLAGS = -O2 -Wall -mmcu=msp430f5529 -I./USBSerial/
+CFLAGS = -O2 -Wall -mmcu=msp430f5529
 FET = tilib
 GDB = msp430-gdb
 GDBTUI = $(GDB)tui
@@ -14,13 +14,12 @@ GDBTUI = $(GDB)tui
 OBJS=$(PROG).o
 
 all: $(PROG).elf  $(PROG).lst
-	#cd USBSerial; make
 	$(SIZE) $(PROG).elf
 
 .PHONY: all clean install mspdebug debug gdb tui ddd
 
 $(PROG).elf: $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) $(wildcard USBSerial/*.o) -o $(PROG).elf
+	$(CC) $(CFLAGS) $(OBJS) -o $(PROG).elf
 
 %.o: %.cpp
 	$(CC) $(CFLAGS) -c $<
