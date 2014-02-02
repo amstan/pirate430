@@ -4,9 +4,9 @@
 import serial
 
 class spi(object):
-	def __init__(self,port="/dev/ttyACM0",baud=9600,*args):
+	def __init__(self,port="/dev/ttyACM1",baud=9600,*args):
 		self.port=port
-		self._serial=serial.Serial(self.port,baud,rtscts=True,*args)
+		self._serial=serial.Serial(self.port,baud,*args)
 		
 		self.sync()
 		

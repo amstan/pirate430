@@ -54,7 +54,7 @@ int putchar(int c) {
 
 int main(void) {
 	chip_init();
-	uart.init(115200);
+	uart.init(9600);
 	
 	clear_bit(OUT(LED_G_PORT),LED_G);
 	clear_bit(OUT(LED_R_PORT),LED_R);
