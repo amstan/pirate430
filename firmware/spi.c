@@ -11,7 +11,7 @@ void spi_init(unsigned int clocksettings) {
 	// SMCLK
 	UCB0CTL1 = UCSSEL_2;
 	
-	//No prescaler
+	//Prescaler
 	UCB0BR0 = 10;
 	UCB0BR1 = 0;
 	

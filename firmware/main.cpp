@@ -51,7 +51,7 @@ int main(void) {
 	
 	OUT(CS_PORT)=0x7f; //All except P6.7(connected as a CTS input)
 	DIR(CS_PORT)=0x7f;
-	spi_init(UCCKPL*0+UCCKPH*1); //Clock idle in a low state, data on rising edge
+	spi_init(UCCKPL*1+UCCKPH*0); //Clock idle in a low state, data on rising edge
 	
 	while(1) {
 		switch(getchar()) {
