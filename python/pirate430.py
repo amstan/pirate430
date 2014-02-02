@@ -28,7 +28,7 @@ class _safeSerial(serial.Serial):
 			self.open()
 			raise
 
-class spi(object):
+class SPI(object):
 	def __init__(self,port="/dev/ttyACM0",baud=9600,*args):
 		self.port=port
 		self._serial=_safeSerial(self.port,baud,rtscts=True,*args)
@@ -91,9 +91,17 @@ class spi(object):
 		
 		return reply
 
+class SPIDevice(object):
+	def __init__(self,spi,cs=0):
+		self.spi=spi
+		self.cs_mask=(1<<cs)
+	
+	def xfer(self,data):
+		return self.spi.xfer(data,cs=self.cs_mask)
+
 if __name__=="__main__":
 	import random
-	s=spi()
+	s=SPI()
 	
 	while 1:
 		x=random.randint(0,255)
