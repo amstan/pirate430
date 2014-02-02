@@ -12,7 +12,7 @@ void spi_init(unsigned int clocksettings) {
 	UCB0CTL1 = UCSSEL_2;
 	
 	//No prescaler
-	UCB0BR0 = 0;
+	UCB0BR0 = 10;
 	UCB0BR1 = 0;
 	
 	//Start SPI hardware
