@@ -12,3 +12,6 @@
 #define MISO 1
 
 #define CS_PORT 6
+
+#define WS2812_PORT 2
+#define WS2812_PIN 5

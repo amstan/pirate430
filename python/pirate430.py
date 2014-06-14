@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
@@ -52,6 +53,11 @@ class SPI(object):
 		if tosend!=reply:
 			raise IOError("Echo test to the pirate430 failed. %r!=%r" % (tosend,reply))
 	
+	def set_ws2812(self,data):
+		length=len(data)
+		length=[length//256,length%256]
+		self._serial.write(b'w'+bytes(length)+bytes(data))
+	
 	@property
 	def green_led(self):
 		return self._green_led
@@ -94,16 +100,29 @@ class SPI(object):
 class SPIDevice(object):
 	def __init__(self,spi,cs=0):
 		self.spi=spi
+		self.cs=cs
 		self.cs_mask=(1<<cs)
 	
 	def xfer(self,data):
 		return self.spi.xfer(data,cs=self.cs_mask)
+	
+	def __repr__(self):
+		return "SPIDevice(%r, cs=%r)" % (self.spi.port,self.cs)
 
 if __name__=="__main__":
-	import random
 	s=SPI()
 	
-	while 1:
-		x=random.randint(0,255)
-		y=s.xfer(x)
+	def test_ws2812(color=[255,255,255],count=30*4):
+		data=[255]*(count*3)
+		for i in range(count):
+			data[(i*3)+1]=color[0]
+			data[(i*3)]=color[1]
+			data[(i*3)+2]=color[2]
+		s.set_ws2812(data)
+	
+	def test_random():
+		import random
+		while 1:
+			x=random.randint(0,255)
+			y=s.xfer(x)
 		print (x==y,x,y)

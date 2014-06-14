@@ -11,7 +11,7 @@ FET = tilib
 GDB = msp430-gdb
 GDBTUI = $(GDB)tui
 
-OBJS=$(PROG).o
+OBJS=ws2811.o $(PROG).o
 
 all: $(PROG).elf  $(PROG).lst
 	#cd USBSerial; make

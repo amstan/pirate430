@@ -10,6 +10,8 @@
 #include "pins.h"
 #include "spi.c"
 
+#include "ws2811.h"
+
 #define F_CPU 16000000
 
 ///Set multiplier based on the slow xtal
@@ -30,6 +32,8 @@ void chip_init(void) {
 	
 	set_bit(DIR(LED_R_PORT),LED_R);
 	set_bit(DIR(LED_G_PORT),LED_G);
+	
+	set_bit(DIR(WS2812_PORT),WS2812_PIN);
 }
 
 char getchar(void) {
@@ -53,6 +57,9 @@ int main(void) {
 	DIR(CS_PORT)=0x7f;
 	spi_init(UCCKPL*1+UCCKPH*0); //Clock idle in a low state, data on rising edge
 	
+	unsigned int ws2812_length=0;
+	unsigned char ws2812_data[1024];
+	
 	while(1) {
 		switch(getchar()) {
 			case 'g': //green led control
@@ -61,6 +68,15 @@ int main(void) {
 			
 			case 'r': //red led control
 				change_bit(OUT(LED_R_PORT),LED_R,getchar()!=0);
+				break;
+			
+			case 'w': //ws2812
+				ws2812_length=getchar()*256;
+				ws2812_length+=getchar();
+				for(unsigned int i=0;i<ws2812_length;i++) {
+					ws2812_data[i]=getchar();
+				}
+				write_ws2811_hs(ws2812_data,ws2812_length,(1<<WS2812_PIN));
 				break;
 			
 			case 'e': //echo test
